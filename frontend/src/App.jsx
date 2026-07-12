@@ -6,6 +6,8 @@ import Auth from "./components/Auth";
 import ContactList from "./components/ContactList";
 import Chat from "./components/Chat";
 import CallModal from "./components/CallModal";
+import CallKeypad from "./components/CallKeypad";
+import BottomNav from "./components/BottomNav";
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -13,6 +15,7 @@ export default function App() {
   const [contacts, setContacts] = useState([]);
   const [onlineUserIds, setOnlineUserIds] = useState([]);
   const [activeContact, setActiveContact] = useState(null);
+  const [activeTab, setActiveTab] = useState("calls");
 
   const webrtc = useWebRTC(profile?.id);
 
@@ -63,6 +66,13 @@ export default function App() {
     [webrtc]
   );
 
+  const handleCallByPhone = useCallback(
+    (contact, callType) => {
+      webrtc.startCall(contact.id, callType);
+    },
+    [webrtc]
+  );
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setProfile(null);
@@ -73,23 +83,35 @@ export default function App() {
   if (!profile) return <div className="loading-screen">Chargement...</div>;
 
   return (
-    <div className="app-layout">
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <span>{profile.full_name || profile.email}</span>
-          <button className="logout-btn" onClick={handleLogout}>Déconnexion</button>
-        </div>
-        <ContactList
-          contacts={contacts}
-          onlineUserIds={onlineUserIds}
-          activeContactId={activeContact?.id}
-          onSelect={setActiveContact}
-        />
-      </aside>
+    <div className="app-layout mobile-layout">
+      <div className="mobile-header">
+        <span>{profile.full_name || profile.email}</span>
+        <button className="logout-btn" onClick={handleLogout}>Déconnexion</button>
+      </div>
 
-      <main className="main-panel">
-        <Chat currentUser={profile} contact={activeContact} onStartCall={handleStartCall} />
-      </main>
+      <div className="mobile-content">
+        {activeTab === "calls" && (
+          <CallKeypad myPhoneNumber={profile.phone_number} onCallByPhone={handleCallByPhone} />
+        )}
+
+        {activeTab === "chats" && !activeContact && (
+          <ContactList
+            contacts={contacts}
+            onlineUserIds={onlineUserIds}
+            activeContactId={activeContact?.id}
+            onSelect={setActiveContact}
+          />
+        )}
+
+        {activeTab === "chats" && activeContact && (
+          <div className="chat-with-back">
+            <button className="back-btn" onClick={() => setActiveContact(null)}>← Retour</button>
+            <Chat currentUser={profile} contact={activeContact} onStartCall={handleStartCall} />
+          </div>
+        )}
+      </div>
+
+      <BottomNav activeTab={activeTab} onChange={(tab) => { setActiveTab(tab); setActiveContact(null); }} />
 
       <CallModal
         callState={webrtc.callState}

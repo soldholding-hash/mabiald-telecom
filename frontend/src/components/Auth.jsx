@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 
+function generatePhoneNumber() {
+  const part1 = Math.floor(10 + Math.random() * 90);
+  const part2 = Math.floor(1000 + Math.random() * 9000);
+  return `+242 06 ${part1} ${part2}`;
+}
+
 export default function Auth({ onAuth }) {
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
@@ -18,11 +24,24 @@ export default function Auth({ onAuth }) {
         const { data, error: signErr } = await supabase.auth.signUp({ email, password });
         if (signErr) throw signErr;
         if (data.user) {
-          await supabase.from("profiles").insert({
-            id: data.user.id,
-            full_name: fullName,
-            email,
-          });
+          let inserted = false;
+          let attempts = 0;
+          while (!inserted && attempts < 5) {
+            const phone_number = generatePhoneNumber();
+            const { error: insertErr } = await supabase.from("profiles").insert({
+              id: data.user.id,
+              full_name: fullName,
+              email,
+              phone_number,
+            });
+            if (!insertErr) {
+              inserted = true;
+            } else if (insertErr.code === "23505") {
+              attempts++;
+            } else {
+              throw insertErr;
+            }
+          }
         }
       } else {
         const { error: signErr } = await supabase.auth.signInWithPassword({ email, password });

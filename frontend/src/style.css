@@ -63,3 +63,164 @@ body { background: #0f1115; color: #eee; }
 .video-grid { position: relative; width: 480px; max-width: 80vw; }
 .remote-video { width: 100%; border-radius: 12px; background: #000; }
 .local-video { position: absolute; bottom: 8px; right: 8px; width: 100px; border-radius: 8px; border: 2px solid #FFB800; }
+
+/* --- Layout mobile façon WhatsApp --- */
+.mobile-layout {
+  flex-direction: column;
+  height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.mobile-header {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #22252b;
+  font-weight: bold;
+  background: #15171c;
+}
+.mobile-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-with-back {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.back-btn {
+  background: none;
+  border: none;
+  color: #FFB800;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* --- Navigation en bas --- */
+.bottom-nav {
+  display: flex;
+  border-top: 1px solid #22252b;
+  background: #15171c;
+}
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 0;
+  background: none;
+  border: none;
+  color: #777;
+  font-size: 12px;
+  cursor: pointer;
+}
+.bottom-nav-item.active {
+  color: #FFB800;
+}
+.bottom-nav-icon {
+  font-size: 20px;
+}
+
+/* --- Clavier d'appel --- */
+.keypad-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px;
+  flex: 1;
+}
+.my-number {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #999;
+  font-size: 13px;
+}
+.my-number strong {
+  display: block;
+  color: #FFB800;
+  font-size: 18px;
+  margin-top: 4px;
+}
+.keypad-display {
+  width: 100%;
+  max-width: 280px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.keypad-display input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 18px;
+  text-align: center;
+}
+.backspace-btn {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 22px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 24px;
+}
+.keypad-key {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.keypad-num {
+  font-size: 22px;
+  font-weight: bold;
+}
+.keypad-letters {
+  font-size: 9px;
+  color: #888;
+  letter-spacing: 1px;
+}
+.keypad-actions {
+  display: flex;
+  gap: 24px;
+}
+.keypad-call-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+.keypad-call-btn.audio {
+  background: #4ade80;
+}
+.keypad-call-btn.video {
+  background: #FFB800;
+}
+.keypad-call-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
