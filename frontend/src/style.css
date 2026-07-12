@@ -224,3 +224,8 @@ body { background: #0f1115; color: #eee; }
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* Correction hauteur viewport mobile */
+.mobile-layout {
+  height: 100dvh;
+}
