@@ -309,3 +309,34 @@ body { background: #0f1115; color: #eee; }
   color: #666;
   flex-shrink: 0;
 }
+
+/* --- Comportement natif mobile (pour l'APK) --- */
+html, body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.mobile-layout {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.mobile-content {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
