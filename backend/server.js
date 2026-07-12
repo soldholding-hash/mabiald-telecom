@@ -28,12 +28,12 @@ io.on("connection", (socket) => {
     broadcastPresence();
   });
 
-  socket.on("call:offer", ({ toUserId, fromUserId, offer, callType }) => {
+  socket.on("call:offer", ({ toUserId, fromUserId, offer, callType, callId }) => {
     const targetSocket = onlineUsers.get(toUserId);
     if (targetSocket) {
-      io.to(targetSocket).emit("call:incoming", { fromUserId, offer, callType });
+      io.to(targetSocket).emit("call:incoming", { fromUserId, offer, callType, callId });
     } else {
-      socket.emit("call:unavailable", { toUserId });
+      socket.emit("call:unavailable", { toUserId, callId });
     }
   });
 

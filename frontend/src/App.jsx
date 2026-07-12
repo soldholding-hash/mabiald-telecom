@@ -7,6 +7,7 @@ import ContactList from "./components/ContactList";
 import Chat from "./components/Chat";
 import CallModal from "./components/CallModal";
 import CallKeypad from "./components/CallKeypad";
+import CallHistory from "./components/CallHistory";
 import BottomNav from "./components/BottomNav";
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
   const [onlineUserIds, setOnlineUserIds] = useState([]);
   const [activeContact, setActiveContact] = useState(null);
   const [activeTab, setActiveTab] = useState("calls");
+  const [callsView, setCallsView] = useState("history");
 
   const webrtc = useWebRTC(profile?.id);
 
@@ -69,6 +71,14 @@ export default function App() {
   const handleCallByPhone = useCallback(
     (contact, callType) => {
       webrtc.startCall(contact.id, callType);
+      setCallsView("history");
+    },
+    [webrtc]
+  );
+
+  const handleCallBack = useCallback(
+    (contact, callType) => {
+      webrtc.startCall(contact.id, callType);
     },
     [webrtc]
   );
@@ -90,8 +100,19 @@ export default function App() {
       </div>
 
       <div className="mobile-content">
-        {activeTab === "calls" && (
-          <CallKeypad myPhoneNumber={profile.phone_number} onCallByPhone={handleCallByPhone} />
+        {activeTab === "calls" && callsView === "history" && (
+          <CallHistory
+            currentUserId={profile.id}
+            onOpenKeypad={() => setCallsView("keypad")}
+            onCallBack={handleCallBack}
+          />
+        )}
+
+        {activeTab === "calls" && callsView === "keypad" && (
+          <div className="chat-with-back">
+            <button className="back-btn" onClick={() => setCallsView("history")}>← Retour</button>
+            <CallKeypad myPhoneNumber={profile.phone_number} onCallByPhone={handleCallByPhone} />
+          </div>
         )}
 
         {activeTab === "chats" && !activeContact && (
@@ -111,7 +132,14 @@ export default function App() {
         )}
       </div>
 
-      <BottomNav activeTab={activeTab} onChange={(tab) => { setActiveTab(tab); setActiveContact(null); }} />
+      <BottomNav
+        activeTab={activeTab}
+        onChange={(tab) => {
+          setActiveTab(tab);
+          setActiveContact(null);
+          setCallsView("history");
+        }}
+      />
 
       <CallModal
         callState={webrtc.callState}

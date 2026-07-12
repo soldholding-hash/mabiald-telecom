@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { socket } from "../socket";
+import { supabase } from "../supabaseClient";
 
 const ICE_SERVERS = {
   iceServers: [
@@ -17,6 +18,8 @@ export function useWebRTC(currentUserId) {
   const pcRef = useRef(null);
   const targetUserRef = useRef(null);
   const pendingCandidates = useRef([]);
+  const callIdRef = useRef(null);
+  const wasAnsweredRef = useRef(false);
 
   const createPeerConnection = useCallback(() => {
     const pc = new RTCPeerConnection(ICE_SERVERS);
@@ -55,6 +58,18 @@ export function useWebRTC(currentUserId) {
   const startCall = useCallback(
     async (toUserId, callType) => {
       targetUserRef.current = toUserId;
+      const callId = crypto.randomUUID();
+      callIdRef.current = callId;
+      wasAnsweredRef.current = false;
+
+      await supabase.from("calls").insert({
+        id: callId,
+        caller_id: currentUserId,
+        callee_id: toUserId,
+        call_type: callType,
+        status: "ringing",
+      });
+
       const pc = createPeerConnection();
       pcRef.current = pc;
 
@@ -69,6 +84,7 @@ export function useWebRTC(currentUserId) {
         fromUserId: currentUserId,
         offer,
         callType,
+        callId,
       });
 
       setCallState("calling");
@@ -78,8 +94,17 @@ export function useWebRTC(currentUserId) {
 
   const acceptCall = useCallback(async () => {
     if (!incomingCall) return;
-    const { fromUserId, offer, callType } = incomingCall;
+    const { fromUserId, offer, callType, callId } = incomingCall;
     targetUserRef.current = fromUserId;
+    callIdRef.current = callId;
+    wasAnsweredRef.current = true;
+
+    if (callId) {
+      await supabase
+        .from("calls")
+        .update({ status: "answered", answered_at: new Date().toISOString() })
+        .eq("id", callId);
+    }
 
     const pc = createPeerConnection();
     pcRef.current = pc;
@@ -102,6 +127,12 @@ export function useWebRTC(currentUserId) {
   const rejectCall = useCallback(() => {
     if (incomingCall) {
       socket.emit("call:reject", { toUserId: incomingCall.fromUserId });
+      if (incomingCall.callId) {
+        supabase
+          .from("calls")
+          .update({ status: "rejected", ended_at: new Date().toISOString() })
+          .eq("id", incomingCall.callId);
+      }
     }
     setIncomingCall(null);
     setCallState("idle");
@@ -110,6 +141,13 @@ export function useWebRTC(currentUserId) {
   const endCall = useCallback(() => {
     if (targetUserRef.current) {
       socket.emit("call:end", { toUserId: targetUserRef.current });
+    }
+    if (callIdRef.current) {
+      const finalStatus = wasAnsweredRef.current ? "completed" : "missed";
+      supabase
+        .from("calls")
+        .update({ status: finalStatus, ended_at: new Date().toISOString() })
+        .eq("id", callIdRef.current);
     }
     if (pcRef.current) {
       pcRef.current.close();
@@ -122,17 +160,20 @@ export function useWebRTC(currentUserId) {
     setRemoteStream(null);
     setCallState("idle");
     targetUserRef.current = null;
+    callIdRef.current = null;
+    wasAnsweredRef.current = false;
   }, [localStream]);
 
   useEffect(() => {
-    const onIncoming = ({ fromUserId, offer, callType }) => {
-      setIncomingCall({ fromUserId, offer, callType });
+    const onIncoming = ({ fromUserId, offer, callType, callId }) => {
+      setIncomingCall({ fromUserId, offer, callType, callId });
       setCallState("ringing");
     };
 
     const onAnswered = async ({ answer }) => {
       if (pcRef.current) {
         await pcRef.current.setRemoteDescription(new RTCSessionDescription(answer));
+        wasAnsweredRef.current = true;
         setCallState("in-call");
       }
     };
@@ -153,9 +194,16 @@ export function useWebRTC(currentUserId) {
       endCall();
     };
 
-    const onUnavailable = () => {
+    const onUnavailable = ({ callId }) => {
+      if (callId) {
+        supabase
+          .from("calls")
+          .update({ status: "missed", ended_at: new Date().toISOString() })
+          .eq("id", callId);
+      }
       alert("Utilisateur hors ligne ou injoignable.");
       setCallState("idle");
+      callIdRef.current = null;
     };
 
     socket.on("call:incoming", onIncoming);
@@ -173,6 +221,7 @@ export function useWebRTC(currentUserId) {
       socket.off("call:ended", onEnded);
       socket.off("call:unavailable", onUnavailable);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endCall]);
 
   return {
