@@ -12,6 +12,7 @@ import BottomNav from "./components/BottomNav";
 
 export default function App() {
   const [session, setSession] = useState(null);
+  const [sessionChecked, setSessionChecked] = useState(false);
   const [profile, setProfile] = useState(null);
   const [contacts, setContacts] = useState([]);
   const [onlineUserIds, setOnlineUserIds] = useState([]);
@@ -22,13 +23,19 @@ export default function App() {
   const webrtc = useWebRTC(profile?.id);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setSessionChecked(true);
+    });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
     return () => listener.subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
-    if (!session) return;
+    if (!session) {
+      setProfile(null);
+      return;
+    }
     const loadProfile = async () => {
       const { data } = await supabase
         .from("profiles")
@@ -88,6 +95,10 @@ export default function App() {
     setProfile(null);
     setSession(null);
   };
+
+  if (!sessionChecked) {
+    return <div className="loading-screen">Chargement...</div>;
+  }
 
   if (!session) return <Auth onAuth={() => {}} />;
   if (!profile) return <div className="loading-screen">Chargement...</div>;
