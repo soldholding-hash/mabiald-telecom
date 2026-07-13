@@ -12,7 +12,7 @@ import BottomNav from "./components/BottomNav";
 import PendingApproval from "./components/PendingApproval";
 import AdminPanel from "./components/AdminPanel";
 
-const ADMIN_EMAIL = "confirmation@mabialdtelecom.com";
+const ADMIN_EMAIL = "mabialdtelecom.admin@gmail.com";
 
 export default function App() {
   const [session, setSession] = useState(null);
