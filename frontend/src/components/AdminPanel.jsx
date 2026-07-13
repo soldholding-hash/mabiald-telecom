@@ -7,12 +7,19 @@ function generatePhoneNumber() {
   return `03${part1}${part2}`;
 }
 
+function formatAmount(n) {
+  return new Intl.NumberFormat("fr-FR").format(n) + " FCFA";
+}
+
 export default function AdminPanel({ onBack }) {
   const [pending, setPending] = useState([]);
   const [approved, setApproved] = useState([]);
   const [phoneInputs, setPhoneInputs] = useState({});
+  const [creditInputs, setCreditInputs] = useState({});
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("pending");
+  const [creditingId, setCreditingId] = useState(null);
+  const [message, setMessage] = useState("");
 
   const loadProfiles = useCallback(async () => {
     setLoading(true);
@@ -58,6 +65,26 @@ export default function AdminPanel({ onBack }) {
     loadProfiles();
   };
 
+  const handleCredit = async (userId) => {
+    const amount = parseFloat(creditInputs[userId]);
+    if (!amount || amount <= 0) return;
+    setCreditingId(userId);
+    setMessage("");
+    const { error } = await supabase.rpc("credit_money", {
+      receiver_id: userId,
+      amount,
+      note: "Crédit administrateur",
+    });
+    setCreditingId(null);
+    if (error) {
+      setMessage("Erreur: " + error.message);
+    } else {
+      setMessage(`${formatAmount(amount)} crédités avec succès.`);
+      setCreditInputs((prev) => ({ ...prev, [userId]: "" }));
+      loadProfiles();
+    }
+  };
+
   return (
     <div className="admin-panel">
       <div className="admin-header">
@@ -80,6 +107,7 @@ export default function AdminPanel({ onBack }) {
         </button>
       </div>
 
+      {message && <p className="info">{message}</p>}
       {loading && <p className="empty">Chargement...</p>}
 
       {!loading && view === "pending" && pending.length === 0 && (
@@ -125,6 +153,27 @@ export default function AdminPanel({ onBack }) {
               <p><strong>{p.full_name}</strong></p>
               <p className="admin-detail">📧 {p.email}</p>
               <p className="admin-detail">📞 {p.phone_number}</p>
+              <p className="admin-detail">💰 Solde: {formatAmount(p.balance || 0)}</p>
+              <div className="admin-phone-row">
+                <input
+                  type="number"
+                  value={creditInputs[p.id] || ""}
+                  onChange={(e) =>
+                    setCreditInputs((prev) => ({ ...prev, [p.id]: e.target.value }))
+                  }
+                  placeholder="Montant à créditer (FCFA)"
+                  min="1"
+                />
+              </div>
+              <div className="admin-actions">
+                <button
+                  className="approve-btn"
+                  onClick={() => handleCredit(p.id)}
+                  disabled={creditingId === p.id}
+                >
+                  {creditingId === p.id ? "Envoi..." : "Créditer"}
+                </button>
+              </div>
             </div>
           ))}
         </div>

@@ -15,6 +15,13 @@ export default function BottomNav({ activeTab, onChange }) {
         <span className="bottom-nav-icon">💬</span>
         <span>Discussions</span>
       </button>
+      <button
+        className={`bottom-nav-item ${activeTab === "money" ? "active" : ""}`}
+        onClick={() => onChange("money")}
+      >
+        <span className="bottom-nav-icon">💰</span>
+        <span>Money</span>
+      </button>
     </nav>
   );
 }

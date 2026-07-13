@@ -11,6 +11,7 @@ import CallHistory from "./components/CallHistory";
 import BottomNav from "./components/BottomNav";
 import PendingApproval from "./components/PendingApproval";
 import AdminPanel from "./components/AdminPanel";
+import MoneyWallet from "./components/MoneyWallet";
 
 const ADMIN_EMAIL = "mabialdtelecom.admin@gmail.com";
 
@@ -36,21 +37,22 @@ export default function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
+  const loadProfile = useCallback(async () => {
     if (!session) {
       setProfile(null);
       return;
     }
-    const loadProfile = async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .single();
-      setProfile(data || { id: session.user.id, email: session.user.email });
-    };
-    loadProfile();
+    const { data } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", session.user.id)
+      .single();
+    setProfile(data || { id: session.user.id, email: session.user.email });
   }, [session]);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
   useEffect(() => {
     if (!profile?.id) return;
@@ -164,6 +166,10 @@ export default function App() {
             <button className="back-btn" onClick={() => setActiveContact(null)}>← Retour</button>
             <Chat currentUser={profile} contact={activeContact} onStartCall={handleStartCall} />
           </div>
+        )}
+
+        {activeTab === "money" && (
+          <MoneyWallet profile={profile} onBalanceChange={loadProfile} />
         )}
       </div>
 
