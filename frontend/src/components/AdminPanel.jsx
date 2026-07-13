@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient";
 function generatePhoneNumber() {
   const part1 = Math.floor(10 + Math.random() * 90);
   const part2 = Math.floor(1000 + Math.random() * 9000);
-  return `+242 06 ${part1} ${part2}`;
+  return `03${part1}${part2}`;
 }
 
 export default function AdminPanel({ onBack }) {
