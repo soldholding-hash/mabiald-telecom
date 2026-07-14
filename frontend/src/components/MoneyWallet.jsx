@@ -1,5 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../supabaseClient";
+import PinSetup from "./PinSetup";
+
+async function hashPin(pin) {
+  const enc = new TextEncoder().encode(pin);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 function formatAmount(n) {
   return new Intl.NumberFormat("fr-FR").format(n) + " FCFA";
@@ -15,9 +22,12 @@ export default function MoneyWallet({ profile, onBalanceChange }) {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showTransfer, setShowTransfer] = useState(false);
+  const [step, setStep] = useState("form");
   const [targetPhone, setTargetPhone] = useState("");
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
+  const [recipient, setRecipient] = useState(null);
+  const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [sending, setSending] = useState(false);
@@ -51,34 +61,60 @@ export default function MoneyWallet({ profile, onBalanceChange }) {
     return () => supabase.removeChannel(channel);
   }, [profile?.id, loadTransactions, onBalanceChange]);
 
-  const handleTransfer = async (e) => {
+  const resetTransferState = () => {
+    setShowTransfer(false);
+    setStep("form");
+    setTargetPhone("");
+    setAmount("");
+    setNote("");
+    setRecipient(null);
+    setPin("");
+    setError("");
+  };
+
+  const handleLookup = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
     const amt = parseFloat(amount);
     if (!targetPhone.trim() || !amt || amt <= 0) {
       setError("Renseigne un numéro et un montant valides.");
       return;
     }
+    const { data: recipients } = await supabase
+      .from("profiles")
+      .select("id, full_name, phone_number")
+      .eq("phone_number", targetPhone.trim());
+
+    const found = recipients && recipients[0];
+    if (!found) {
+      setError("Aucun utilisateur ne correspond à ce numéro.");
+      return;
+    }
+    if (found.id === profile.id) {
+      setError("Tu ne peux pas t'envoyer de l'argent à toi-même.");
+      return;
+    }
+    setRecipient(found);
+    setStep("confirm");
+  };
+
+  const handlePinConfirm = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (!/^\d{4}$/.test(pin)) {
+      setError("Le code PIN doit contenir 4 chiffres.");
+      return;
+    }
     setSending(true);
     try {
-      const { data: recipients } = await supabase
-        .from("profiles")
-        .select("id, full_name, phone_number")
-        .eq("phone_number", targetPhone.trim());
-
-      const recipient = recipients && recipients[0];
-      if (!recipient) {
-        setError("Aucun utilisateur ne correspond à ce numéro.");
-        setSending(false);
-        return;
-      }
-      if (recipient.id === profile.id) {
-        setError("Tu ne peux pas t'envoyer de l'argent à toi-même.");
+      const enteredHash = await hashPin(pin);
+      if (enteredHash !== profile.money_pin_hash) {
+        setError("Code PIN incorrect.");
         setSending(false);
         return;
       }
 
+      const amt = parseFloat(amount);
       const { error: rpcError } = await supabase.rpc("transfer_money", {
         sender_id: profile.id,
         receiver_id: recipient.id,
@@ -89,17 +125,17 @@ export default function MoneyWallet({ profile, onBalanceChange }) {
       if (rpcError) throw rpcError;
 
       setSuccess(`${formatAmount(amt)} envoyé à ${recipient.full_name || recipient.phone_number}.`);
-      setTargetPhone("");
-      setAmount("");
-      setNote("");
-      setShowTransfer(false);
+      resetTransferState();
       onBalanceChange?.();
     } catch (err) {
       setError(err.message.includes("Solde insuffisant") ? "Solde insuffisant." : err.message);
-    } finally {
       setSending(false);
     }
   };
+
+  if (!profile?.money_pin_hash) {
+    return <PinSetup profile={profile} onDone={onBalanceChange} />;
+  }
 
   return (
     <div className="money-wallet">
@@ -112,9 +148,9 @@ export default function MoneyWallet({ profile, onBalanceChange }) {
         </button>
       </div>
 
-      {showTransfer && (
+      {showTransfer && step === "form" && (
         <div className="money-transfer-overlay">
-          <form className="money-transfer-form" onSubmit={handleTransfer}>
+          <form className="money-transfer-form" onSubmit={handleLookup}>
             <h3>Envoyer de l'argent</h3>
             <input
               type="text"
@@ -138,11 +174,63 @@ export default function MoneyWallet({ profile, onBalanceChange }) {
             />
             {error && <p className="error">{error}</p>}
             <div className="money-form-actions">
-              <button type="button" className="money-cancel-btn" onClick={() => { setShowTransfer(false); setError(""); }}>
+              <button type="button" className="money-cancel-btn" onClick={resetTransferState}>
                 Annuler
               </button>
+              <button type="submit" className="money-send-btn">
+                Continuer
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {showTransfer && step === "confirm" && recipient && (
+        <div className="money-transfer-overlay">
+          <div className="money-transfer-form">
+            <h3>Confirme le bénéficiaire</h3>
+            <div className="money-confirm-box">
+              <p className="money-confirm-name">{recipient.full_name || "Nom non renseigné"}</p>
+              <p className="money-confirm-phone">{recipient.phone_number}</p>
+              <p className="money-confirm-amount">{formatAmount(parseFloat(amount) || 0)}</p>
+              {note && <p className="money-confirm-note">Note : {note}</p>}
+            </div>
+            <p className="pending-text">Vérifie bien le nom avant de continuer.</p>
+            <div className="money-form-actions">
+              <button type="button" className="money-cancel-btn" onClick={() => setStep("form")}>
+                Modifier
+              </button>
+              <button type="button" className="money-send-btn" onClick={() => setStep("pin")}>
+                Confirmer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showTransfer && step === "pin" && recipient && (
+        <div className="money-transfer-overlay">
+          <form className="money-transfer-form" onSubmit={handlePinConfirm}>
+            <h3>Code PIN requis</h3>
+            <p className="pending-text">
+              Envoi de {formatAmount(parseFloat(amount) || 0)} à {recipient.full_name || recipient.phone_number}
+            </p>
+            <input
+              type="password"
+              inputMode="numeric"
+              maxLength={4}
+              placeholder="Code PIN"
+              value={pin}
+              onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+              autoFocus
+            />
+            {error && <p className="error">{error}</p>}
+            <div className="money-form-actions">
+              <button type="button" className="money-cancel-btn" onClick={() => setStep("confirm")}>
+                Retour
+              </button>
               <button type="submit" className="money-send-btn" disabled={sending}>
-                {sending ? "Envoi..." : "Envoyer"}
+                {sending ? "Envoi..." : "Valider"}
               </button>
             </div>
           </form>
