@@ -12,6 +12,7 @@ import BottomNav from "./components/BottomNav";
 import PendingApproval from "./components/PendingApproval";
 import AdminPanel from "./components/AdminPanel";
 import MoneyWallet from "./components/MoneyWallet";
+import DistributorPanel from "./components/DistributorPanel";
 
 const ADMIN_EMAIL = "mabialdtelecom.admin@gmail.com";
 
@@ -25,6 +26,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("calls");
   const [callsView, setCallsView] = useState("history");
   const [showAdmin, setShowAdmin] = useState(false);
+  const [showDistributor, setShowDistributor] = useState(false);
 
   const webrtc = useWebRTC(profile?.id);
 
@@ -115,9 +117,14 @@ export default function App() {
   if (!profile) return <div className="loading-screen">Chargement...</div>;
 
   const isAdmin = profile.email === ADMIN_EMAIL;
+  const isDistributor = profile.role === "distributor";
 
   if (isAdmin && showAdmin) {
     return <AdminPanel onBack={() => setShowAdmin(false)} />;
+  }
+
+  if (isDistributor && showDistributor) {
+    return <DistributorPanel profile={profile} onBack={() => setShowDistributor(false)} />;
   }
 
   if (!isAdmin && profile.status === "pending") {
@@ -131,6 +138,9 @@ export default function App() {
         <div className="header-actions">
           {isAdmin && (
             <button className="admin-btn" onClick={() => setShowAdmin(true)}>⚙️ Admin</button>
+          )}
+          {isDistributor && (
+            <button className="admin-btn" onClick={() => setShowDistributor(true)}>🏧 Distributeur</button>
           )}
           <button className="logout-btn" onClick={handleLogout}>Déconnexion</button>
         </div>

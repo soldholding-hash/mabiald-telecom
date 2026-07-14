@@ -673,3 +673,26 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   letter-spacing: 8px;
   font-size: 20px;
 }
+
+/* --- Retrait & distributeur --- */
+.money-balance-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+.money-withdraw-btn {
+  background: none;
+  border: 1px solid #FFB800;
+  color: #FFB800;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.admin-subheading {
+  color: #FFB800;
+  font-size: 12px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
