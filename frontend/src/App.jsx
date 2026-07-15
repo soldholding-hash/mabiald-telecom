@@ -13,6 +13,7 @@ import PendingApproval from "./components/PendingApproval";
 import AdminPanel from "./components/AdminPanel";
 import MoneyWallet from "./components/MoneyWallet";
 import DistributorPanel from "./components/DistributorPanel";
+import SubscriptionGate from "./components/SubscriptionGate";
 
 const ADMIN_EMAIL = "mabialdtelecom.admin@gmail.com";
 
@@ -121,6 +122,11 @@ export default function App() {
 
   const isAdmin = profile.email === ADMIN_EMAIL;
   const isDistributor = profile.role === "distributor";
+  const isSubscriptionActive =
+    profile.subscription_active &&
+    profile.subscription_expires_at &&
+    new Date(profile.subscription_expires_at) > new Date();
+  const needsSubscription = !isAdmin && !isSubscriptionActive;
 
   if (isAdmin && showAdmin) {
     return <AdminPanel onBack={() => setShowAdmin(false)} />;
@@ -150,7 +156,15 @@ export default function App() {
       </div>
 
       <div className="mobile-content">
-        {activeTab === "calls" && callsView === "keypad" && (
+        {activeTab === "calls" && needsSubscription && (
+          <SubscriptionGate
+            profile={profile}
+            onActivated={loadProfile}
+            onGoToMoney={() => setActiveTab("money")}
+          />
+        )}
+
+        {activeTab === "calls" && !needsSubscription && callsView === "keypad" && (
           <div className="chat-with-back">
             <div className="calls-topbar">
               <span>Appels</span>
@@ -162,14 +176,22 @@ export default function App() {
           </div>
         )}
 
-        {activeTab === "calls" && callsView === "history" && (
+        {activeTab === "calls" && !needsSubscription && callsView === "history" && (
           <div className="chat-with-back">
             <button className="back-btn" onClick={() => setCallsView("keypad")}>← Retour</button>
             <CallHistory currentUserId={profile.id} onCallBack={handleCallBack} />
           </div>
         )}
 
-        {activeTab === "chats" && !activeContact && (
+        {activeTab === "chats" && needsSubscription && (
+          <SubscriptionGate
+            profile={profile}
+            onActivated={loadProfile}
+            onGoToMoney={() => setActiveTab("money")}
+          />
+        )}
+
+        {activeTab === "chats" && !needsSubscription && !activeContact && (
           <ContactList
             contacts={contacts}
             onlineUserIds={onlineUserIds}
@@ -178,7 +200,7 @@ export default function App() {
           />
         )}
 
-        {activeTab === "chats" && activeContact && (
+        {activeTab === "chats" && !needsSubscription && activeContact && (
           <div className="chat-with-back">
             <button className="back-btn" onClick={() => setActiveContact(null)}>← Retour</button>
             <Chat currentUser={profile} contact={activeContact} onStartCall={handleStartCall} />
