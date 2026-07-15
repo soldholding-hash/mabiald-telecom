@@ -60,10 +60,13 @@ export default function App() {
     if (!profile?.id) return;
     socket.connect();
     socket.emit("identify", profile.id);
+    const onConnect = () => socket.emit("identify", profile.id);
+    socket.on("connect", onConnect);
     const onPresence = (ids) => setOnlineUserIds(ids);
     socket.on("presence:update", onPresence);
     return () => {
       socket.off("presence:update", onPresence);
+      socket.off("connect", onConnect);
       socket.disconnect();
     };
   }, [profile?.id]);
