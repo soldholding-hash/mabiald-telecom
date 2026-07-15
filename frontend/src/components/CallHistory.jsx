@@ -11,7 +11,7 @@ function formatTime(iso) {
   return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
 }
 
-export default function CallHistory({ currentUserId, onOpenKeypad, onCallBack }) {
+export default function CallHistory({ currentUserId, onCallBack }) {
   const [calls, setCalls] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,12 +44,11 @@ export default function CallHistory({ currentUserId, onOpenKeypad, onCallBack })
     <div className="call-history">
       <div className="call-history-header">
         <h2>Appels récents</h2>
-        <button className="new-call-btn" onClick={onOpenKeypad} title="Nouvel appel">✏️</button>
       </div>
 
       {loading && <p className="empty">Chargement...</p>}
       {!loading && calls.length === 0 && (
-        <p className="empty">Aucun appel pour l'instant. Appuie sur ✏️ pour composer un numéro.</p>
+        <p className="empty">Aucun appel pour l'instant.</p>
       )}
 
       <div className="call-history-list">

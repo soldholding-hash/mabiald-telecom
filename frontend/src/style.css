@@ -724,3 +724,22 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   overflow: hidden;
   margin-bottom: 10px;
 }
+
+/* --- Barre du haut écran Appels --- */
+.calls-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px 0;
+  font-weight: bold;
+  color: #eee;
+}
+.history-btn {
+  background: none;
+  border: 1px solid #FFB800;
+  color: #FFB800;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  cursor: pointer;
+}

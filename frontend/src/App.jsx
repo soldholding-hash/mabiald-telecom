@@ -24,7 +24,7 @@ export default function App() {
   const [onlineUserIds, setOnlineUserIds] = useState([]);
   const [activeContact, setActiveContact] = useState(null);
   const [activeTab, setActiveTab] = useState("calls");
-  const [callsView, setCallsView] = useState("history");
+  const [callsView, setCallsView] = useState("keypad");
   const [showAdmin, setShowAdmin] = useState(false);
   const [showDistributor, setShowDistributor] = useState(false);
 
@@ -91,7 +91,7 @@ export default function App() {
   const handleCallByPhone = useCallback(
     (contact, callType) => {
       webrtc.startCall(contact.id, callType);
-      setCallsView("history");
+      setCallsView("keypad");
     },
     [webrtc]
   );
@@ -147,18 +147,22 @@ export default function App() {
       </div>
 
       <div className="mobile-content">
-        {activeTab === "calls" && callsView === "history" && (
-          <CallHistory
-            currentUserId={profile.id}
-            onOpenKeypad={() => setCallsView("keypad")}
-            onCallBack={handleCallBack}
-          />
-        )}
-
         {activeTab === "calls" && callsView === "keypad" && (
           <div className="chat-with-back">
-            <button className="back-btn" onClick={() => setCallsView("history")}>← Retour</button>
+            <div className="calls-topbar">
+              <span>Appels</span>
+              <button className="history-btn" onClick={() => setCallsView("history")}>
+                🕐 Historique
+              </button>
+            </div>
             <CallKeypad myPhoneNumber={profile.phone_number} onCallByPhone={handleCallByPhone} />
+          </div>
+        )}
+
+        {activeTab === "calls" && callsView === "history" && (
+          <div className="chat-with-back">
+            <button className="back-btn" onClick={() => setCallsView("keypad")}>← Retour</button>
+            <CallHistory currentUserId={profile.id} onCallBack={handleCallBack} />
           </div>
         )}
 
@@ -188,7 +192,7 @@ export default function App() {
         onChange={(tab) => {
           setActiveTab(tab);
           setActiveContact(null);
-          setCallsView("history");
+          setCallsView("keypad");
         }}
       />
 
