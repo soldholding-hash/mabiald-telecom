@@ -24,53 +24,77 @@ export default function CallModal({
   }, [remoteStream]);
 
   const stopRinging = () => {
-    if (ringIntervalRef.current) {
-      clearInterval(ringIntervalRef.current);
-      ringIntervalRef.current = null;
-    }
-    if (vibrateIntervalRef.current) {
-      clearInterval(vibrateIntervalRef.current);
-      vibrateIntervalRef.current = null;
-    }
-    if (navigator.vibrate) navigator.vibrate(0);
-    if (audioCtxRef.current) {
-      audioCtxRef.current.close().catch(() => {});
-      audioCtxRef.current = null;
+    try {
+      if (ringIntervalRef.current) {
+        clearInterval(ringIntervalRef.current);
+        ringIntervalRef.current = null;
+      }
+      if (vibrateIntervalRef.current) {
+        clearInterval(vibrateIntervalRef.current);
+        vibrateIntervalRef.current = null;
+      }
+      if (navigator.vibrate) navigator.vibrate(0);
+      if (audioCtxRef.current) {
+        audioCtxRef.current.close().catch(() => {});
+        audioCtxRef.current = null;
+      }
+    } catch (e) {
+      console.warn("stopRinging error", e);
     }
   };
 
   const playBeep = (ctx, freq, startTime, duration) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(0.2, startTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(startTime);
-    osc.stop(startTime + duration);
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.2, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    } catch (e) {
+      console.warn("playBeep error", e);
+    }
   };
 
   useEffect(() => {
     if (callState === "ringing") {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioContext();
-      audioCtxRef.current = ctx;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          const ctx = new AudioContext();
+          audioCtxRef.current = ctx;
+          if (ctx.state === "suspended") {
+            ctx.resume().catch(() => {});
+          }
+          const ringPattern = () => {
+            try {
+              const now = ctx.currentTime;
+              playBeep(ctx, 880, now, 0.4);
+              playBeep(ctx, 880, now + 0.5, 0.4);
+            } catch (e) {
+              console.warn("ringPattern error", e);
+            }
+          };
+          ringPattern();
+          ringIntervalRef.current = setInterval(ringPattern, 1800);
+        }
+      } catch (e) {
+        console.warn("AudioContext init error", e);
+      }
 
-      const ringPattern = () => {
-        const now = ctx.currentTime;
-        playBeep(ctx, 880, now, 0.4);
-        playBeep(ctx, 880, now + 0.5, 0.4);
-      };
-      ringPattern();
-      ringIntervalRef.current = setInterval(ringPattern, 1800);
-
-      if (navigator.vibrate) {
-        navigator.vibrate([400, 200, 400]);
-        vibrateIntervalRef.current = setInterval(() => {
+      try {
+        if (navigator.vibrate) {
           navigator.vibrate([400, 200, 400]);
-        }, 1800);
+          vibrateIntervalRef.current = setInterval(() => {
+            navigator.vibrate([400, 200, 400]);
+          }, 1800);
+        }
+      } catch (e) {
+        console.warn("vibrate error", e);
       }
     } else {
       stopRinging();
