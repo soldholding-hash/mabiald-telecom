@@ -696,3 +696,31 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   margin-bottom: 6px;
   font-weight: bold;
 }
+
+/* --- QR Code Mabiald Money --- */
+.qr-modal {
+  max-width: 340px;
+}
+.qr-receive-box {
+  text-align: center;
+  padding: 10px 0;
+}
+.qr-image {
+  width: 220px;
+  height: 220px;
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.qr-scan-box {
+  text-align: center;
+}
+.qr-scanner-frame {
+  width: 100%;
+  min-height: 240px;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}

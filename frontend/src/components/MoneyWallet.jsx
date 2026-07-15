@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import PinSetup from "./PinSetup";
+import MoneyQR from "./MoneyQR";
 
 async function hashPin(pin) {
   const enc = new TextEncoder().encode(pin);
@@ -41,6 +42,8 @@ export default function MoneyWallet({ profile, onBalanceChange }) {
   const [wPin, setWPin] = useState("");
   const [wError, setWError] = useState("");
   const [wSending, setWSending] = useState(false);
+
+  const [showQR, setShowQR] = useState(false);
 
   const [incomingRequest, setIncomingRequest] = useState(null);
   const [incomingPin, setIncomingPin] = useState("");
@@ -107,6 +110,15 @@ export default function MoneyWallet({ profile, onBalanceChange }) {
     setRecipient(null);
     setPin("");
     setError("");
+  };
+
+  const handleScanResult = (phone) => {
+    setShowQR(false);
+    setTargetPhone(phone);
+    setAmount("");
+    setNote("");
+    setStep("form");
+    setShowTransfer(true);
   };
 
   const handleLookup = async (e) => {
@@ -293,8 +305,15 @@ export default function MoneyWallet({ profile, onBalanceChange }) {
           <button className="money-withdraw-btn" onClick={() => setShowWithdraw(true)}>
             🏧 Retirer
           </button>
+          <button className="money-withdraw-btn" onClick={() => setShowQR(true)}>
+            📷 QR
+          </button>
         </div>
       </div>
+
+      {showQR && (
+        <MoneyQR profile={profile} onScanResult={handleScanResult} onClose={() => setShowQR(false)} />
+      )}
 
       {incomingRequest && (
         <div className="money-transfer-overlay">
