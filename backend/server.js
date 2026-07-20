@@ -5,7 +5,7 @@ import cors from "cors";
 
 const app = express();
 app.use(cors());
-app.get("/", (req, res) => res.send("MABIALD Telecom - signaling server OK"));
+app.get("/", (req, res) => res.send("Green Telecom - signaling server OK"));
 app.get("/health", (req, res) => res.json({ status: "ok", online: onlineUsers.size }));
 
 const server = http.createServer(app);
@@ -72,5 +72,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
-  console.log(`MABIALD Telecom signaling server démarré sur le port ${PORT}`);
+  console.log(`Green Telecom signaling server démarré sur le port ${PORT}`);
 });

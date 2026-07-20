@@ -1,7 +1,7 @@
 {
   "name": "mabiald-telecom-backend",
   "version": "1.0.0",
-  "description": "Backend de signaling WebRTC pour MABIALD Telecom",
+  "description": "Backend de signaling WebRTC pour Green Telecom",
   "main": "server.js",
   "type": "module",
   "scripts": {
