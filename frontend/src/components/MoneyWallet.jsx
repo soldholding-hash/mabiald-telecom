@@ -537,7 +537,7 @@ export default function MoneyWallet({ profile, onBalanceChange }) {
               <div className="money-tx-info">
                 <span className="money-tx-name">
                   {isCredit
-                    ? "Crédit MABIALD Télécom"
+                    ? "Crédit Green Télécom"
                     : other?.full_name || other?.phone_number || "Utilisateur"}
                 </span>
                 {t.note && <span className="money-tx-note">{t.note}</span>}

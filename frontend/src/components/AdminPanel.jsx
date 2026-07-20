@@ -187,7 +187,7 @@ export default function AdminPanel({ onBack }) {
                   onChange={(e) =>
                     setPhoneInputs((prev) => ({ ...prev, [p.id]: e.target.value }))
                   }
-                  placeholder="Numéro MABIALD à attribuer"
+                  placeholder="Numéro Green à attribuer"
                 />
               </div>
               <div className="admin-actions">

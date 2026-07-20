@@ -37,7 +37,7 @@ export default function Auth({ onAuth }) {
         }
         if (!data.session) {
           setInfo(
-            "Compte créé. Vérifie ta boîte mail pour confirmer ton adresse, puis attends la validation de ton inscription par MABIALD Télécom avant de pouvoir te connecter."
+            "Compte créé. Vérifie ta boîte mail pour confirmer ton adresse, puis attends la validation de ton inscription par Green Télécom avant de pouvoir te connecter."
           );
           setMode("login");
         } else {
@@ -57,7 +57,7 @@ export default function Auth({ onAuth }) {
 
   return (
     <div className="auth-screen">
-      <h1>MABIALD Télécom</h1>
+      <h1>Green Télécom</h1>
       <p className="tagline">Messagerie, appels vocaux & vidéo</p>
       <form onSubmit={handleSubmit} className="auth-form">
         {mode === "signup" && (

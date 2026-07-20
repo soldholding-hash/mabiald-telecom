@@ -51,7 +51,7 @@ export default function MoneyQR({ profile, onScanResult, onClose }) {
   return (
     <div className="money-transfer-overlay">
       <div className="money-transfer-form qr-modal">
-        <h3>Mabiald Money QR</h3>
+        <h3>Green Money QR</h3>
         <div className="admin-tabs">
           <button
             className={`admin-tab ${tab === "receive" ? "active" : ""}`}
@@ -70,7 +70,7 @@ export default function MoneyQR({ profile, onScanResult, onClose }) {
         {tab === "receive" && (
           <div className="qr-receive-box">
             {qrDataUrl ? (
-              <img src={qrDataUrl} alt="Mon QR code Mabiald Money" className="qr-image" />
+              <img src={qrDataUrl} alt="Mon QR code Green Money" className="qr-image" />
             ) : (
               <p className="empty">Génération du code...</p>
             )}
@@ -83,7 +83,7 @@ export default function MoneyQR({ profile, onScanResult, onClose }) {
           <div className="qr-scan-box">
             <div id={scannerElId} className="qr-scanner-frame" />
             {scanError && <p className="error">{scanError}</p>}
-            <p className="pending-text">Vise le QR code Mabiald Money du bénéficiaire.</p>
+            <p className="pending-text">Vise le QR code Green Money du bénéficiaire.</p>
           </div>
         )}
 

@@ -21,7 +21,7 @@ export default function SubscriptionGate({ profile, onActivated, onGoToMoney }) 
     if (rpcError) {
       setError(
         rpcError.message.includes("Solde insuffisant")
-          ? "Solde insuffisant. Recharge ton compte Mabiald Money."
+          ? "Solde insuffisant. Recharge ton compte Green Money."
           : rpcError.message
       );
       return;
@@ -35,7 +35,7 @@ export default function SubscriptionGate({ profile, onActivated, onGoToMoney }) 
       <p className="pending-title">Abonnement requis</p>
       <p className="pending-text">
         Pour passer des appels et envoyer des messages, active ton abonnement mensuel
-        MABIALD Télécom à {formatAmount(PRICE)}, prélevé sur ton solde Mabiald Money.
+        Green Télécom à {formatAmount(PRICE)}, prélevé sur ton solde Green Money.
       </p>
       <p className="money-my-number">Ton solde actuel : {formatAmount(profile?.balance || 0)}</p>
       {error && <p className="error">{error}</p>}

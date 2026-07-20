@@ -470,7 +470,7 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   cursor: pointer;
 }
 
-/* --- Mabiald Money --- */
+/* --- Green Money --- */
 .money-wallet {
   display: flex;
   flex-direction: column;
@@ -697,7 +697,7 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   font-weight: bold;
 }
 
-/* --- QR Code Mabiald Money --- */
+/* --- QR Code Green Money --- */
 .qr-modal {
   max-width: 340px;
 }

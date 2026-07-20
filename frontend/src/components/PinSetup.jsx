@@ -43,7 +43,7 @@ export default function PinSetup({ profile, onDone }) {
       <p className="pending-icon">🔒</p>
       <h2>Configure ton code PIN</h2>
       <p className="pending-text">
-        Ce code à 4 chiffres protège tes transactions Mabiald Money.
+        Ce code à 4 chiffres protège tes transactions Green Money.
         Tu devras le saisir à chaque envoi d'argent.
       </p>
       <form onSubmit={handleSubmit} className="auth-form">
