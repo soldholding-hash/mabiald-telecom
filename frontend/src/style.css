@@ -2,17 +2,17 @@
 body { background: #0f1115; color: #eee; }
 
 .auth-screen { max-width: 400px; margin: 80px auto; text-align: center; padding: 24px; }
-.auth-screen h1 { color: #FFB800; margin-bottom: 4px; }
+.auth-screen h1 { color: #22C55E; margin-bottom: 4px; }
 .tagline { color: #999; margin-bottom: 24px; font-size: 14px; }
 .auth-form { display: flex; flex-direction: column; gap: 12px; }
 .auth-form input {
   padding: 12px; border-radius: 8px; border: 1px solid #333; background: #1a1a1a; color: #fff;
 }
 .auth-form button {
-  padding: 12px; border-radius: 8px; border: none; background: #FFB800; color: #1A1A1A;
+  padding: 12px; border-radius: 8px; border: none; background: #22C55E; color: #1A1A1A;
   font-weight: bold; cursor: pointer;
 }
-.link-btn { margin-top: 12px; background: none; border: none; color: #FFB800; cursor: pointer; }
+.link-btn { margin-top: 12px; background: none; border: none; color: #22C55E; cursor: pointer; }
 .error { color: #ff5c5c; font-size: 13px; }
 .loading-screen { text-align: center; margin-top: 100px; color: #999; }
 
@@ -29,7 +29,7 @@ body { background: #0f1115; color: #eee; }
 .contact-list h2 { font-size: 13px; text-transform: uppercase; color: #777; margin-bottom: 8px; }
 .contact-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; }
 .contact-item:hover, .contact-item.active { background: #22252b; }
-.avatar { width: 36px; height: 36px; border-radius: 50%; background: #FFB800; color: #1A1A1A; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: #22C55E; color: #1A1A1A; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 .contact-info { display: flex; flex-direction: column; }
 .status { font-size: 11px; }
 .status.online { color: #4ade80; }
@@ -45,13 +45,13 @@ body { background: #0f1115; color: #eee; }
 
 .messages-area { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
 .message-bubble { max-width: 60%; padding: 10px 14px; border-radius: 14px; font-size: 14px; }
-.message-bubble.sent { align-self: flex-end; background: #FFB800; color: #1A1A1A; }
+.message-bubble.sent { align-self: flex-end; background: #22C55E; color: #1A1A1A; }
 .message-bubble.received { align-self: flex-start; background: #22252b; color: #eee; }
 .typing-indicator { font-size: 12px; color: #777; font-style: italic; }
 
 .message-input { display: flex; padding: 12px; border-top: 1px solid #22252b; gap: 8px; }
 .message-input input { flex: 1; padding: 10px 14px; border-radius: 20px; border: 1px solid #333; background: #1a1a1a; color: #fff; }
-.message-input button { padding: 10px 18px; border-radius: 20px; border: none; background: #FFB800; color: #1A1A1A; font-weight: bold; cursor: pointer; }
+.message-input button { padding: 10px 18px; border-radius: 20px; border: none; background: #22C55E; color: #1A1A1A; font-weight: bold; cursor: pointer; }
 
 .call-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 999; }
 .call-modal { background: #15171c; padding: 24px; border-radius: 16px; text-align: center; min-width: 300px; }
@@ -62,7 +62,7 @@ body { background: #0f1115; color: #eee; }
 
 .video-grid { position: relative; width: 480px; max-width: 80vw; }
 .remote-video { width: 100%; border-radius: 12px; background: #000; }
-.local-video { position: absolute; bottom: 8px; right: 8px; width: 100px; border-radius: 8px; border: 2px solid #FFB800; }
+.local-video { position: absolute; bottom: 8px; right: 8px; width: 100px; border-radius: 8px; border: 2px solid #A855F7; }
 
 /* --- Layout mobile façon WhatsApp --- */
 .mobile-layout {
@@ -95,7 +95,7 @@ body { background: #0f1115; color: #eee; }
 .back-btn {
   background: none;
   border: none;
-  color: #FFB800;
+  color: #A855F7;
   text-align: left;
   padding: 12px 16px;
   font-size: 14px;
@@ -122,7 +122,7 @@ body { background: #0f1115; color: #eee; }
   cursor: pointer;
 }
 .bottom-nav-item.active {
-  color: #FFB800;
+  color: #A855F7;
 }
 .bottom-nav-icon {
   font-size: 20px;
@@ -144,7 +144,7 @@ body { background: #0f1115; color: #eee; }
 }
 .my-number strong {
   display: block;
-  color: #FFB800;
+  color: #22C55E;
   font-size: 18px;
   margin-top: 4px;
 }
@@ -218,7 +218,7 @@ body { background: #0f1115; color: #eee; }
   background: #4ade80;
 }
 .keypad-call-btn.video {
-  background: #FFB800;
+  background: #22C55E;
 }
 .keypad-call-btn:disabled {
   opacity: 0.4;
@@ -248,7 +248,7 @@ body { background: #0f1115; color: #eee; }
   color: #eee;
 }
 .new-call-btn {
-  background: #FFB800;
+  background: #22C55E;
   border: none;
   width: 36px;
   height: 36px;
@@ -275,7 +275,7 @@ body { background: #0f1115; color: #eee; }
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #FFB800;
+  background: #22C55E;
   color: #1A1A1A;
   display: flex;
   align-items: center;
@@ -352,7 +352,7 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   margin-bottom: 12px;
 }
 .pending-title {
-  color: #FFB800;
+  color: #22C55E;
   font-weight: bold;
   font-size: 16px;
   margin-bottom: 12px;
@@ -379,8 +379,8 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
 }
 .admin-btn {
   background: none;
-  border: 1px solid #FFB800;
-  color: #FFB800;
+  border: 1px solid #A855F7;
+  color: #A855F7;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
@@ -415,8 +415,8 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   cursor: pointer;
 }
 .admin-tab.active {
-  color: #FFB800;
-  border-bottom: 2px solid #FFB800;
+  color: #22C55E;
+  border-bottom: 2px solid #22C55E;
 }
 .admin-list {
   flex: 1;
@@ -480,7 +480,7 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
 }
 .money-balance-card {
   background: linear-gradient(135deg, #1a1c22, #0f1115);
-  border: 1px solid #FFB800;
+  border: 1px solid #22C55E;
   border-radius: 16px;
   padding: 20px;
   display: flex;
@@ -494,7 +494,7 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   font-size: 13px;
 }
 .money-balance-amount {
-  color: #FFB800;
+  color: #22C55E;
   font-size: 28px;
   font-weight: bold;
   margin: 8px 0;
@@ -505,7 +505,7 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   margin-bottom: 14px;
 }
 .money-transfer-btn {
-  background: #FFB800;
+  background: #22C55E;
   color: #1A1A1A;
   border: none;
   padding: 10px 20px;
@@ -534,7 +534,7 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   gap: 10px;
 }
 .money-transfer-form h3 {
-  color: #FFB800;
+  color: #22C55E;
   margin-bottom: 6px;
 }
 .money-transfer-form input {
@@ -560,7 +560,7 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
 }
 .money-send-btn {
   flex: 1;
-  background: #FFB800;
+  background: #22C55E;
   border: none;
   color: #1A1A1A;
   font-weight: bold;
@@ -640,7 +640,7 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   margin: 10px 0;
 }
 .money-confirm-name {
-  color: #FFB800;
+  color: #22C55E;
   font-size: 18px;
   font-weight: bold;
 }
@@ -665,7 +665,7 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
   text-align: center;
 }
 .pin-setup h2 {
-  color: #FFB800;
+  color: #22C55E;
   margin-bottom: 10px;
 }
 .pin-setup input {
@@ -682,15 +682,15 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
 }
 .money-withdraw-btn {
   background: none;
-  border: 1px solid #FFB800;
-  color: #FFB800;
+  border: 1px solid #A855F7;
+  color: #A855F7;
   padding: 10px 20px;
   border-radius: 20px;
   font-weight: bold;
   cursor: pointer;
 }
 .admin-subheading {
-  color: #FFB800;
+  color: #A855F7;
   font-size: 12px;
   margin-top: 14px;
   margin-bottom: 6px;
@@ -736,8 +736,8 @@ button, .contact-item, .call-history-item, .keypad-key, .bottom-nav-item {
 }
 .history-btn {
   background: none;
-  border: 1px solid #FFB800;
-  color: #FFB800;
+  border: 1px solid #A855F7;
+  color: #A855F7;
   padding: 6px 12px;
   border-radius: 16px;
   font-size: 12px;
