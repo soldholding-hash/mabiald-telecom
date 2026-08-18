@@ -224,6 +224,11 @@ export default function App() {
         }}
       />
 
+      {sipPhone.sipError && (
+        <div style={{position:"fixed",bottom:70,left:10,right:10,background:"#ff5c5c",color:"#fff",padding:"8px",borderRadius:"8px",fontSize:"11px",zIndex:9999}}>
+          SIP Error: {sipPhone.sipError}
+        </div>
+      )}
       <SipIncomingCall
         incomingCall={sipPhone.incomingCall}
         inCall={sipPhone.inCall}

@@ -6,6 +6,7 @@ const ASTERISK_WSS_PORT = 8089;
 
 export function useSipPhone(phoneNumber, sipPassword) {
   const [registered, setRegistered] = useState(false);
+  const [sipError, setSipError] = useState(null);
   const [incomingCall, setIncomingCall] = useState(null);
   const [inCall, setInCall] = useState(false);
   const userAgentRef = useRef(null);
@@ -70,21 +71,25 @@ export function useSipPhone(phoneNumber, sipPassword) {
         registererRef.current = registerer;
         return registerer.register();
       })
-      .then(() => setRegistered(true))
-      .catch((err) => {
-        console.error("Erreur enregistrement SIP:", err);
-        setRegistered(false);
-      });
+        .then(() => {
+          setRegistered(true);
+          setSipError(null);
+        })
+        .catch((err) => {
+          console.error("Erreur enregistrement SIP:", err);
+          setRegistered(false);
+          setSipError(err.message || String(err));
+        });
 
-    return () => {
-      if (registererRef.current) {
-        registererRef.current.unregister().catch(() => {});
-      }
-      if (userAgentRef.current) {
-        userAgentRef.current.stop().catch(() => {});
-      }
-      setRegistered(false);
-    };
+      return () => {
+        if (registererRef.current) {
+          registererRef.current.unregister().catch(() => {});
+        }
+        if (userAgentRef.current) {
+          userAgentRef.current.stop().catch(() => {});
+        }
+        setRegistered(false);
+      };
   }, [phoneNumber, sipPassword, attachRemoteAudio]);
 
   const acceptCall = useCallback(async () => {
@@ -127,5 +132,6 @@ export function useSipPhone(phoneNumber, sipPassword) {
     rejectCall,
     hangup,
     remoteAudioRef,
+    sipError,
   };
 }
