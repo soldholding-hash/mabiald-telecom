@@ -14,6 +14,8 @@ import AdminPanel from "./components/AdminPanel";
 import MoneyWallet from "./components/MoneyWallet";
 import DistributorPanel from "./components/DistributorPanel";
 import SubscriptionGate from "./components/SubscriptionGate";
+import { useSipPhone } from "./hooks/useSipPhone";
+import SipIncomingCall from "./components/SipIncomingCall";
 
 const ADMIN_EMAIL = "mabialdtelecom.admin@gmail.com";
 
@@ -30,6 +32,7 @@ export default function App() {
   const [showDistributor, setShowDistributor] = useState(false);
 
   const webrtc = useWebRTC(profile?.id);
+  const sipPhone = useSipPhone(profile?.phone_number, profile?.sip_password);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -220,6 +223,15 @@ export default function App() {
           setCallsView("keypad");
         }}
       />
+
+      <SipIncomingCall
+        incomingCall={sipPhone.incomingCall}
+        inCall={sipPhone.inCall}
+        onAccept={sipPhone.acceptCall}
+        onReject={sipPhone.rejectCall}
+        onHangup={sipPhone.hangup}
+      />
+      <audio ref={sipPhone.remoteAudioRef} autoPlay />
 
       <CallModal
         callState={webrtc.callState}
